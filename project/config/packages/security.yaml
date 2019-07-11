@@ -6,36 +6,35 @@
 # Note: Only the *first* access control that matches will be used
 security:
     providers:
-        user_db_provider:
+        entity_provider:
             entity:
                 class: App\Entity\User
-                property: apiKey
-        in_memory:
-            memory:
-                users:
-                    admin:
-                        #USE TO GENERATE: ./bin/console security:encode-password
-                        password: $2y$12$nfjD193kPySJu5GRk.M6DeMCKP1MeSNE88gP7AqQrVdodp2DUObgy
-                        roles: 'ROLE_ADMIN'
+                property: username
     role_hierarchy:
         ROLE_ADMIN: [ROLE_API]
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        login:
+            pattern:  ^/login
+            stateless: true
+            anonymous: true
+            json_login:
+                check_path:               /login_check
+                success_handler:          lexik_jwt_authentication.handler.authentication_success
+                failure_handler:          lexik_jwt_authentication.handler.authentication_failure
+                require_previous_session: false
         api:
             pattern: ^/api/
+            stateless: true
+            anonymous: false
             guard:
                 authenticators:
-                    - App\Security\TokenAuthenticator
-            provider: user_db_provider
-        main:
-            http_basic: true
-            provider: in_memory
+                    # - App\Security\TokenAuthenticator
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
     access_control:
-        - { path: ^/api/, roles: ROLE_API }
-        - { path: ^/admin/, roles: ROLE_ADMIN }
-    encoders:
-        Symfony\Component\Security\Core\User\User:
-            algorithm: bcrypt
-            cost: 12
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+

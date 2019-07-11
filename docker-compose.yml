@@ -1,6 +1,15 @@
 version: "3"
-
 services:
+  db:
+    image: mysql:5.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=root # Setting the MYSQL credentials to root:root.
+    volumes:
+      - symfony_db:/var/lib/mysql:cached # Persist the database in a Docker volume.
+    ports:
+      - 3311:3306
+    networks:
+      - symfony
   fpm:
     build: # Info to build the Docker image
       context: . # Specify where the Dockerfile is located (e.g. in the root directory of the project)
@@ -11,7 +20,6 @@ services:
      - ./project/:/var/www/project/ # Location of the project for php-fpm. Note this should be the same for NGINX.
     networks:
      - symfony # Docker containers (services) that need to connect to each other should be on the same network.
-
   nginx:
     build:
       context: .
@@ -22,17 +30,15 @@ services:
      - 8001:80 # Ports that are exposed, you can connect to port 8001 to port 80 of the container.
     networks:
      - symfony
-
-  db:
-    image: mysql:5.6
-    environment:
-    - MYSQL_ROOT_PASSWORD=root # Setting the MYSQL credentials to root:root.
-    volumes:
-    - symfony_db:/var/lib/mysql:cached # Persist the database in a Docker volume.
+  elk:
+    image: willdurand/elk
     ports:
-    - 3311:3306
-    networks:
-    - symfony
+      - "81:80"
+    volumes:
+      - ./build/elk/logstash:/etc/logstash:cached
+      - ./build/elk/logstash/patterns:/opt/logstash/patterns:cached
+      #- ./logs/project:/var/www/project/var/log:cached
+      - ./logs/nginx:/var/log/nginx:cached
 
 volumes:
   symfony_db:
