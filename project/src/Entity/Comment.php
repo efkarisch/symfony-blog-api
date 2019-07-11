@@ -2,11 +2,9 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  */
 class Comment
@@ -28,6 +26,7 @@ class Comment
      * @ORM\JoinColumn(nullable=false)
      */
     private $article;
+
 
     public function getId()
     {
@@ -58,8 +57,4 @@ class Comment
         return $this;
     }
 
-    public function __toString()
-    {
-        return (string) $this->getId();
-    }
 }

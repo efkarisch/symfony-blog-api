@@ -2,11 +2,11 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Article;
-use App\Entity\Comment;
-use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use App\Entity\User;
+use App\Entity\Article;
+use App\Entity\Comment;
 
 class AppFixtures extends Fixture
 {
@@ -18,18 +18,25 @@ class AppFixtures extends Fixture
         $user->setPassword('test');
         $manager->persist($user);
 
-        for ($i = 0; $i < 10; $i++) {
-            $article = new Article();
-            $article->setBody('This is a body of article ' . $i);
+        for($i = 0; $i<10; $i++){ //Article and Comment Loop
 
-            for ($i2= 0; $i2 < $i; $i2++) {
+            $article = new Article();
+
+            $article->setBody('This is the body of article ' . $i);
+
+            for($j=0; $j < 5; $j++ ){ //Create Comments
+
                 $comment = new Comment();
-                $comment->setBody('This is the body of comment ' . $i2 . ' of article ' . $i);
+                $comment->setBody('This is the body of comment ' . $j . ' of article ' . $i );
                 $comment->setArticle($article);
                 $manager->persist($comment);
-            }
+
+            }// End Comment Loop
+
             $manager->persist($article);
-        }
+
+
+        }//end Article & Comment Loop
 
         $manager->flush();
     }

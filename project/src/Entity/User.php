@@ -3,25 +3,19 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Table(name="app_users")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User implements UserInterface, \Serializable
+class User
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="guid", unique=true)
+     * @ORM\Id()
      * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="guid", unique=true)")
      */
     private $id;
-
-    /**
-     * @ORM\Column(type="string", length=64, unique=true))
-     */
-    private $apiKey;
 
     /**
      * @ORM\Column(type="string", length=25)
@@ -29,25 +23,18 @@ class User implements UserInterface, \Serializable
     private $username;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=64, unique=true)
      */
     private $password;
+
+    /**
+     * @ORM\Column(type="string", length=64, unique=true)
+     */
+    private $apiKey;
 
     public function getId()
     {
         return $this->id;
-    }
-
-    public function getApiKey(): ?string
-    {
-        return $this->apiKey;
-    }
-
-    public function setApiKey(string $apiKey): self
-    {
-        $this->apiKey = $apiKey;
-
-        return $this;
     }
 
     public function getUsername(): ?string
@@ -74,11 +61,16 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
-    public function getSalt()
+    public function getApiKey(): ?string
     {
-        // you *may* need a real salt depending on your encoder
-        // see section on salt below
-        return null;
+        return $this->apiKey;
+    }
+
+    public function setApiKey(string $apiKey): self
+    {
+        $this->apiKey = $apiKey;
+
+        return $this;
     }
 
     public function getRoles()
@@ -88,31 +80,6 @@ class User implements UserInterface, \Serializable
 
     public function eraseCredentials()
     {
-    }
-
-    /** @see \Serializable::serialize() */
-    public function serialize()
-    {
-        return serialize(array(
-            $this->id,
-            $this->username,
-            $this->password,
-            $this->apiKey,
-            // see section on salt below
-            // $this->salt,
-        ));
-    }
-
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
-    {
-        list (
-            $this->id,
-            $this->username,
-            $this->password,
-            $this->apiKey,
-            // see section on salt below
-            // $this->salt
-            ) = unserialize($serialized, ['allowed_classes' => false]);
+        //@TODO build eraser
     }
 }

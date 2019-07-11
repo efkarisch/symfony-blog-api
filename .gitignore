@@ -1,1 +1,13 @@
 .idea/
+.git/
+project/var/
+project/vendor/
+project/vendor/.env*
+!project/vendor/.env.test
+project/vendor/composer.lock
+project/vendor/symfony.lock
+project/public/bundles/
+
+###> symfony/phpunit-bridge ###
+project/*phpunit*
+###< symfony/phpunit-bridge ###
